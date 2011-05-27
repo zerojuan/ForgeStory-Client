@@ -41,7 +41,7 @@ package
 		
 		private function getMonster():void{
 			var urlVariables:URLVariables = new URLVariables();
-			urlVariables.uid = PlayerData.instance.uid;
+			urlVariables.uid = PlayerData.instance.player.uid;
 			
 			var urlRequest:URLRequest = new URLRequest("getPlayerItems.php");
 			urlRequest.method = URLRequestMethod.POST;

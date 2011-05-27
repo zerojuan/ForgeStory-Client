@@ -33,9 +33,9 @@ package rpg
 			vBox = new VBox(this, 20, 20);
 			vBox.spacing = 15;
 			
-			userDescriptionLabel = new Label(vBox, 0, 0, PlayerData.instance.username + " is a true warrior from the depths of the Ocean.");
-			winStatsLabel = new Label(vBox, 0, 0, "Battle Stats: " + PlayerData.instance.wins + "W " + PlayerData.instance.loses + "L");
-			coinsLabel = new Label(vBox, 0, 0, "Coins: " + PlayerData.instance.coins);
+			userDescriptionLabel = new Label(vBox, 0, 0, PlayerData.instance.player.username + " is a true warrior from the depths of the Ocean.");
+			winStatsLabel = new Label(vBox, 0, 0, "Battle Stats: " + PlayerData.instance.player.wins + "W " + PlayerData.instance.player.loses + "L");
+			coinsLabel = new Label(vBox, 0, 0, "Coins: " + PlayerData.instance.player.coins);
 			
 			weaponImage = new ItemViewer();
 			weaponImage.x = 20;
@@ -53,7 +53,7 @@ package rpg
 		}
 		
 		public function updateCoins():void{
-			coinsLabel.text = "Coins: " + PlayerData.instance.coins;
+			coinsLabel.text = "Coins: " + PlayerData.instance.player.coins;
 		}
 		
 		public function updateUserDescription(val:String):void{

@@ -20,7 +20,7 @@ package rpg
 			width = 250;
 			height = 100;
 			
-			descriptionLabel = new Label(this, 20, 5, "Welcome, " + PlayerData.instance.username + ". You are in a game about forging items and selling them. Also you forge monsters and fight them. If this is the game you are waiting for your whole life, then click the button below. ");
+			descriptionLabel = new Label(this, 20, 5, "Welcome, " + PlayerData.instance.player.username + ". You are in a game about forging items and selling them. Also you forge monsters and fight them. If this is the game you are waiting for your whole life, then click the button below. ");
 			descriptionLabel.autoSize = true;
 			descriptionLabel.textField.width = 200;
 			descriptionLabel.textField.wordWrap = true;

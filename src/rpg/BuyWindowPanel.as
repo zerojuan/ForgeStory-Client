@@ -49,7 +49,7 @@ package rpg
 		}
 		
 		public function getValueAfterPurchase(price:int):int{
-			return PlayerData.instance.coins -= price;
+			return PlayerData.instance.player.coins -= price;
 		}
 		
 		public function set buyCallback(val:Function):void{

@@ -101,7 +101,7 @@ package
 			if(shopListComboBox.selectedIndex == 0){
 				buyButton.label = "Share";
 				isOnFriendsShop = false;
-				loadShopData(PlayerData.instance.uid);
+				loadShopData(PlayerData.instance.player.uid);
 			}else{
 				buyButton.label = "Buy";
 				isOnFriendsShop = true;
@@ -136,7 +136,7 @@ package
 			if(currItem.type == ItemDataObject.MONSTER){
 				buyButton.enabled = false;
 			}else{
-				if(PlayerData.instance.coins - currItem.price <= 0){
+				if(PlayerData.instance.player.coins - currItem.price <= 0){
 					buyButton.enabled = false;
 				}else{
 					buyButton.enabled = true;
@@ -165,7 +165,7 @@ package
 		
 		override public function onShow():void{
 			loadBuddiesData();
-			loadShopData(PlayerData.instance.uid);
+			loadShopData(PlayerData.instance.player.uid);
 		}
 		
 		override public function onHide():void{
@@ -181,7 +181,7 @@ package
 		private function buyItem():void{
 			var selectedItem:ItemDataObject = (itemList.selectedItem as ItemDataObject);
 			var urlVariables:URLVariables = new URLVariables();
-			urlVariables.uid = PlayerData.instance.uid;
+			urlVariables.uid = PlayerData.instance.player.uid;
 			urlVariables.forger_id = selectedItem.forger_id;
 			urlVariables.item_id = selectedItem.id;
 			urlVariables.item_sell_price = selectedItem.price;
@@ -207,7 +207,7 @@ package
 		
 		private function loadBuddiesData():void{
 			var urlVariables:URLVariables = new URLVariables();
-			urlVariables.uid = PlayerData.instance.uid;
+			urlVariables.uid = PlayerData.instance.player..uid;
 			
 			var urlRequest:URLRequest = new URLRequest("getPlayerBuddies.php");
 			urlRequest.method = URLRequestMethod.POST;

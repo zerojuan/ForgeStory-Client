@@ -89,7 +89,7 @@ package
 			
 			priceSlider = new HUISlider(vBox, 0, 0, "Price");
 			priceSlider.minimum = 0;
-			priceSlider.maximum = PlayerData.instance.coins;
+			priceSlider.maximum = PlayerData.instance.player.coins;
 			priceSlider.tick = 1;
 			priceSlider.labelPrecision = 0;
 			
@@ -140,9 +140,9 @@ package
 		private function updatePlayerData():void{
 			successWindow.visible = false;
 			enable(true);
-			PlayerData.instance.coins -= priceSlider.value;
-			priceSlider.maximum = PlayerData.instance.coins;
-			if(PlayerData.instance.coins <= 0){
+			PlayerData.instance.player.coins -= priceSlider.value;
+			priceSlider.maximum = PlayerData.instance.player.coins;
+			if(PlayerData.instance.player.coins <= 0){
 				priceSlider.value = 0;
 				priceSlider.enabled = false;
 			}

@@ -53,8 +53,8 @@ package
 			super();
 			
 			_avatar = PlayerData.instance.avatar;
-			_avatar.setBody(PlayerData.instance.body+".png");
-			_avatar.setHead(PlayerData.instance.head+".png");
+			_avatar.setBody(PlayerData.instance.player.body+".png");
+			_avatar.setHead(PlayerData.instance.player.head+".png");
 			
 			_buttonBox = new HBox(this, 400, 400);
 			
@@ -72,7 +72,7 @@ package
 			welcomeWindow.width = 250;
 			welcomeWindow.height = 120;
 			welcomeWindow.addEventListener(Event.CLOSE, onCloseWelcomeWindow);
-			welcomeWindow.visible = PlayerData.instance.isNew;
+			welcomeWindow.visible = PlayerData.instance.player.isNew;
 			
 			welcomePanel = new WelcomePanel(welcomeWindow, 0, 0);
 			welcomePanel.cancelCallback = onCloseWelcomeWindow;
@@ -106,7 +106,7 @@ package
 		private function buyItem():void{
 			var selectedItem:ItemDataObject = loadedItem;
 			var urlVariables:URLVariables = new URLVariables();
-			urlVariables.uid = PlayerData.instance.uid;
+			urlVariables.uid = PlayerData.instance.player.uid;
 			urlVariables.forger_id = selectedItem.forger_id;
 			urlVariables.item_id = selectedItem.id;
 			urlVariables.item_sell_price = selectedItem.price;
@@ -196,11 +196,11 @@ package
 			_avatar.scaleX = 3;
 			_avatar.scaleY = 3;
 			
-			_avatar.setBody(PlayerData.instance.body+".png");
-			_avatar.setHead(PlayerData.instance.head+".png");
+			_avatar.setBody(PlayerData.instance.player.body+".png");
+			_avatar.setHead(PlayerData.instance.player.head+".png");
 			
-			userDataPanel.updateArmorImage(PlayerData.instance.armor);
-			userDataPanel.updateWeaponImage(PlayerData.instance.weapon);
+			userDataPanel.updateArmorImage(PlayerData.instance.player.armor);
+			userDataPanel.updateWeaponImage(PlayerData.instance.player.weapon);
 		}
 		
 		private function loadPlayerData():void{

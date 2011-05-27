@@ -62,7 +62,7 @@ package
 			vBoxLeft = new VBox(this, 100, 300);
 			hBox = new HBox(this, 400, 400);
 			
-			editNameText = new InputText(vBoxRight, 0, 0, PlayerData.instance.username);
+			editNameText = new InputText(vBoxRight, 0, 0, PlayerData.instance.player.username);
 			editNameText.width = 200;
 			headComboBox = new ComboBox(vBoxRight, 0, 0);
 			headComboBox.width = 200;
@@ -103,8 +103,8 @@ package
 			weaponComboBox.addEventListener(Event.SELECT, onWeaponSelected);
 			
 			avatar = new Avatar();
-			avatar.setBody(PlayerData.instance.body+".png");
-			avatar.setHead(PlayerData.instance.head+".png");
+			avatar.setBody(PlayerData.instance.player.body+".png");
+			avatar.setHead(PlayerData.instance.player.head+".png");
 			
 			avatar.scaleX = 2.5;
 			avatar.scaleY = 2.5;
@@ -137,10 +137,10 @@ package
 		}
 		
 		override public function onShow():void{
-			headValue = PlayerData.instance.head;
-			bodyValue = PlayerData.instance.body;
-			armorValue = PlayerData.instance.armor;
-			weaponValue = PlayerData.instance.weapon;
+			headValue = PlayerData.instance.player.head;
+			bodyValue = PlayerData.instance.player.body;
+			armorValue = PlayerData.instance.player.armor;
+			weaponValue = PlayerData.instance.player.weapon;
 			
 			populateItems(ItemDataObject.HEAD, onHeadLoaded);
 			populateItems(ItemDataObject.BODY, onBodyLoaded);
@@ -168,7 +168,7 @@ package
 			urlVariables.name = editNameText.text;
 			urlVariables.head = headValue;
 			urlVariables.body = bodyValue;
-			urlVariables.uid = PlayerData.instance.uid;
+			urlVariables.uid = PlayerData.instance.player.uid;
 			urlVariables.armor = armorValue;
 			urlVariables.weapon = weaponValue;
 			
@@ -282,7 +282,7 @@ package
 		
 		private function populateItems(type:int, handler:Function):void{
 			var urlVariables:URLVariables = new URLVariables();
-			urlVariables.uid = PlayerData.instance.uid;
+			urlVariables.uid = PlayerData.instance.player.uid;
 			urlVariables.type = type;
 			
 			var urlRequest:URLRequest = new URLRequest("getInventoryItems.php");
