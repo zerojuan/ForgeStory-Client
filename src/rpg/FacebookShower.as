@@ -1,6 +1,8 @@
 package rpg
 {
 	import com.facebook.graph.Facebook;
+	
+	import model.Item;
 
 	public class FacebookShower{
 		private static var _instance:FacebookShower;
@@ -21,7 +23,7 @@ package rpg
 			}
 		}
 		
-		public function showUI(item:ItemDataObject):void{
+		public function showUI(item:Item):void{
 			var obj:Object = 
 				{
 					method: 'stream.publish',

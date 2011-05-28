@@ -27,11 +27,17 @@ package
 	import flash.net.URLVariables;
 	import flash.utils.ByteArray;
 	
+	import model.Item;
+	
+	import networking.GameNetworkConnection;
+	
 	import paint.AcknowledgementPanel;
 	import paint.PaintUI;
 	
 	import rpg.FacebookShower;
 	import rpg.PlayerData;
+	
+	import tests.GameConnectionTester;
 	
 	public class ForgeScreen extends BaseScreen{
 		private var mainView:SceneView = new SceneView();
@@ -175,28 +181,26 @@ package
 			
 			Logger.print(this, "Selected index: " + typeCombobox.selectedIndex);
 			
-			urlVariables.itemName = nameInput.text;
-			urlVariables.itemDesc = descriptionInput.text;
-			urlVariables.itemType = typeCombobox.selectedIndex;
-			urlVariables.itemPrice = priceSlider.value;
-			urlVariables.forgerId = PlayerData.instance.session.uid;
+			var item:Item = new Item();
+			item.name = nameInput.text;
+			item.description = descriptionInput.text;
+			item.type = typeCombobox.selectedIndex;
+			item.price = priceSlider.value;
+			item.forgerId = PlayerData.instance.player.uid;
 			
-			var urlRequest:URLRequest = new URLRequest("saveItem.php");
-			urlRequest.method = URLRequestMethod.POST;
-			urlRequest.data = urlVariables;
+			var pngData:ByteArray = getPNGData();
 			
-			var urlLoader:URLLoader = new URLLoader();
-			urlLoader.dataFormat = URLLoaderDataFormat.TEXT;
-			urlLoader.addEventListener(Event.COMPLETE, onItemSaved);
-			urlLoader.load(urlRequest);
+			GameNetworkConnection.instance.createItem(onItemSaved, item, pngData);
 		}
 		
-		private function onItemSaved(evt:Event):void{
-			instanceId = evt.target.data;
-			saveImage(instanceId);
+		private function onItemSaved(res:Object):void{
+			//instanceId = evt.target.data;
+			//saveImage(instanceId);
+			Logger.print(this, "Item Saved " + res);
+			onPictureSaved();
 		}
 		
-		private function saveImage(imageName:String):void{
+		private function getPNGData():ByteArray{
 			var source:BitmapData = new BitmapData(64,64);
 			source.draw(paintUI.image);
 			
@@ -206,20 +210,12 @@ package
 			
 			ackPanel.itemImage.bitmapData = source;
 			
-			var jpgStream:ByteArray= PNGEncoder.encode(source);
-			
-			var header:URLRequestHeader = new URLRequestHeader("Content-type", "application/octet-stream");
-			var jpgURLRequest:URLRequest = new URLRequest("itemcreation.php?name="+imageName+".png");
-			jpgURLRequest.requestHeaders.push(header);
-			jpgURLRequest.method = URLRequestMethod.POST;
-			jpgURLRequest.data = jpgStream;
-			
-			var urlLoader:URLLoader = new URLLoader();
-			urlLoader.addEventListener(Event.COMPLETE, onPictureSaved);
-			urlLoader.load(jpgURLRequest);
+			var pngStream:ByteArray= PNGEncoder.encode(source);
+			return pngStream;
 		}
+
 		
-		private function onPictureSaved(evt:Event):void{
+		private function onPictureSaved():void{
 			successWindow.visible = true;
 			successWindow.move(320, 100);
 			ackPanel.itemName = nameInput.text;

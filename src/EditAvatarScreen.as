@@ -1,6 +1,5 @@
 package
 {
-	import com.adobe.serialization.json.JSON;
 	import com.bit101.components.ComboBox;
 	import com.bit101.components.HBox;
 	import com.bit101.components.InputText;
@@ -12,14 +11,12 @@ package
 	import com.pblabs.screens.ScreenManager;
 	
 	import flash.events.Event;
-	import flash.net.URLLoader;
-	import flash.net.URLLoaderDataFormat;
-	import flash.net.URLRequest;
-	import flash.net.URLRequestMethod;
-	import flash.net.URLVariables;
+	
+	import model.Item;
+	
+	import networking.GameNetworkConnection;
 	
 	import rpg.Avatar;
-	import rpg.ItemDataObject;
 	import rpg.ItemViewer;
 	import rpg.PlayerData;
 	
@@ -142,10 +139,10 @@ package
 			armorValue = PlayerData.instance.player.armor;
 			weaponValue = PlayerData.instance.player.weapon;
 			
-			populateItems(ItemDataObject.HEAD, onHeadLoaded);
-			populateItems(ItemDataObject.BODY, onBodyLoaded);
-			populateItems(ItemDataObject.ARMOR, onArmorLoaded);
-			populateItems(ItemDataObject.WEAPON, onWeaponLoaded);
+			populateItems(Item.HEAD, onHeadLoaded);
+			populateItems(Item.BODY, onBodyLoaded);
+			populateItems(Item.ARMOR, onArmorLoaded);
+			populateItems(Item.WEAPON, onWeaponLoaded);
 		}
 		
 		private function enabled(val:Boolean):void{
@@ -164,22 +161,15 @@ package
 		}
 		
 		private function saveToDatabase():void{
-			var urlVariables:URLVariables = new URLVariables();
-			urlVariables.name = editNameText.text;
-			urlVariables.head = headValue;
-			urlVariables.body = bodyValue;
-			urlVariables.uid = PlayerData.instance.player.uid;
-			urlVariables.armor = armorValue;
-			urlVariables.weapon = weaponValue;
+			with(PlayerData.instance.player){
+				name = editNameText.text;
+				head = headValue;
+				body = bodyValue;
+				armor = armorValue;
+				weapon = weaponValue;
+			}
 			
-			var urlRequest:URLRequest = new URLRequest("saveProfile.php");
-			urlRequest.method = URLRequestMethod.POST;
-			urlRequest.data = urlVariables;
-			
-			var urlLoader:URLLoader = new URLLoader();
-			urlLoader.dataFormat = URLLoaderDataFormat.TEXT;
-			urlLoader.addEventListener(Event.COMPLETE, onProfileSaved);
-			urlLoader.load(urlRequest);
+			GameNetworkConnection.instance.savePlayer(onProfileSaved, PlayerData.instance.player);
 		}
 		
 		private function onProfileSaved(evt:Event):void{
@@ -191,89 +181,77 @@ package
 		}
 		
 		private function onHeadSelected(evt:Event):void{
-			setHeadDisplay(headComboBox.selectedItem as ItemDataObject);
+			setHeadDisplay(headComboBox.selectedItem as Item);
 		}
 		
 		private function onBodySelected(evt:Event):void{
-			setBodyDisplay(bodyComboBox.selectedItem as ItemDataObject);
+			setBodyDisplay(bodyComboBox.selectedItem as Item);
 		}
 		
 		private function onArmorSelected(evt:Event):void{
-			setArmorDisplay(armorComboBox.selectedItem as ItemDataObject);
+			setArmorDisplay(armorComboBox.selectedItem as Item);
 		}
 		
 		private function onWeaponSelected(evt:Event):void{
-			setWeaponDisplay(weaponComboBox.selectedItem as ItemDataObject);
+			setWeaponDisplay(weaponComboBox.selectedItem as Item);
 		}
 		
-		private function setHeadDisplay(item:ItemDataObject):void{
+		private function setHeadDisplay(item:Item):void{
 			headNameLabel.text = item.name + "(" + item.price + ")";
 			headDescLabel.text = item.description;
 			avatar.setHead(item.id+".png");
 			headValue = item.id;
 		}
 		
-		private function setBodyDisplay(item:ItemDataObject):void{
+		private function setBodyDisplay(item:Item):void{
 			bodyNameLabel.text = item.name + "(" + item.price + ")";
 			bodyDescLabel.text = item.description;
 			avatar.setBody(item.id+".png");
 			bodyValue = item.id;
 		}
 		
-		private function setArmorDisplay(item:ItemDataObject):void{
+		private function setArmorDisplay(item:Item):void{
 			armorNameLabel.text = item.name + "(" + item.price + ")";
 			armorDescLabel.text = item.description;
 			armorHolder.setURL(item.id+".png");
 			armorValue = item.id;
 		}
 		
-		private function setWeaponDisplay(item:ItemDataObject):void{
+		private function setWeaponDisplay(item:Item):void{
 			weaponNameLabel.text = item.name + "(" + item.price + ")";
 			weaponDescLabel.text = item.description;
 			weaponHolder.setURL(item.id+".png");
 			weaponValue = item.id;
 		}
 		
-		private function onHeadLoaded(evt:Event):void{
-			var obj:Array = JSON.decode(evt.target.data);
-			populateCombobox(obj, headComboBox);
-			setHeadDisplay(headComboBox.selectedItem as ItemDataObject);
+		private function onHeadLoaded(result:Object):void{
+			populateCombobox(result, headComboBox);
+			setHeadDisplay(headComboBox.selectedItem as Item);
 		}
 		
-		private function onBodyLoaded(evt:Event):void{
-			var obj:Array = JSON.decode(evt.target.data);
-			populateCombobox(obj, bodyComboBox);
-			setBodyDisplay(bodyComboBox.selectedItem as ItemDataObject);
+		private function onBodyLoaded(result:Object):void{
+			populateCombobox(result, bodyComboBox);
+			setBodyDisplay(bodyComboBox.selectedItem as Item);
 		}
 		
-		private function onArmorLoaded(evt:Event):void{
-			var obj:Array = JSON.decode(evt.target.data);
-			populateCombobox(obj, armorComboBox);
-			setArmorDisplay(armorComboBox.selectedItem as ItemDataObject);
+		private function onArmorLoaded(result:Object):void{
+			populateCombobox(result, armorComboBox);
+			setArmorDisplay(armorComboBox.selectedItem as Item);
 		}
 		
-		private function onWeaponLoaded(evt:Event):void{
-			var obj:Array = JSON.decode(evt.target.data);
-			populateCombobox(obj, weaponComboBox);
-			setWeaponDisplay(weaponComboBox.selectedItem as ItemDataObject);
+		private function onWeaponLoaded(result:Object):void{
+			populateCombobox(result, weaponComboBox);
+			setWeaponDisplay(weaponComboBox.selectedItem as Item);
 		}
 		
-		private function populateCombobox(obj:Array, combobox:ComboBox):void{
+		private function populateCombobox(obj:Object, combobox:ComboBox):void{
 			Logger.print(this, "Size: " + obj.length);
 			combobox.removeAll();
 			if(obj.length == 0){
 				return;
 			}else{
 				for(var i:int = 0; i < obj.length; i++){
-					var itemData:ItemDataObject = new ItemDataObject();
-					itemData.id = obj[i][0];
-					itemData.name = obj[i][1];
-					itemData.forger_id = obj[i][2];
-					itemData.price = obj[i][3];
-					itemData.type = obj[i][4];
-					itemData.taken = obj[i][5];
-					itemData.description = obj[i][6];
-					combobox.addItem(itemData);
+					combobox.addItem(obj[i]);
 				}
 				combobox.selectedIndex = 0;
 			}
@@ -281,18 +259,9 @@ package
 		}
 		
 		private function populateItems(type:int, handler:Function):void{
-			var urlVariables:URLVariables = new URLVariables();
-			urlVariables.uid = PlayerData.instance.player.uid;
-			urlVariables.type = type;
-			
-			var urlRequest:URLRequest = new URLRequest("getInventoryItems.php");
-			urlRequest.method = URLRequestMethod.POST;
-			urlRequest.data = urlVariables;
-			
-			var urlLoader:URLLoader = new URLLoader();
-			urlLoader.dataFormat = URLLoaderDataFormat.TEXT;
-			urlLoader.addEventListener(Event.COMPLETE, handler);
-			urlLoader.load(urlRequest);
+			var item:Item = new Item();
+			item.type = type;
+			GameNetworkConnection.instance.getMyInventory(handler, PlayerData.instance.player, item);
 		}
 		
 		override public function onHide():void{

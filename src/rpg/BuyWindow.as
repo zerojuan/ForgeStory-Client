@@ -5,6 +5,8 @@ package rpg
 	import flash.display.DisplayObjectContainer;
 	import flash.events.Event;
 	
+	import model.Item;
+	
 	public class BuyWindow extends Window{
 		private var buyWindowPanel:BuyWindowPanel;
 		
@@ -31,11 +33,11 @@ package rpg
 			buyWindowPanel.cancelCallback = cancelCallBack;
 		}
 		
-		public function setItem(item:ItemDataObject):void{
+		public function setItem(item:Item):void{
 			buyWindowPanel.setSummary(item);
 		}
 		
-		public function isSpecial(item:ItemDataObject):void{
+		public function isSpecial(item:Item):void{
 			buyWindowPanel.setFreeSummary(item);
 		}
 		

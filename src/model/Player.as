@@ -18,5 +18,9 @@ package model
 		public function Player(){
 			registerClassAlias("Player", Player);
 		}
+		
+		public function toString():String{
+			return username;
+		}
 	}
 }

@@ -56,7 +56,9 @@ package
 			
 			Logger.print(this, "LINKED UID? " + PlayerData.instance.linkedUID + ":" + getFlashVars().isNew);
 			
-			GameNetworkConnection.instance.getPlayer(onGottenPlayer, PlayerData.instance.session.uid, new Player());
+			var player:Player = new Player();
+			player.uid = PlayerData.instance.session.uid;
+			GameNetworkConnection.instance.getPlayer(onGottenPlayer, player);
 		}
 		
 		private function onGottenPlayer(result:Object):void{

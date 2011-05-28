@@ -19,6 +19,11 @@ package
 	
 	import flashx.textLayout.events.UpdateCompleteEvent;
 	
+	import model.Item;
+	import model.Player;
+	
+	import networking.GameNetworkConnection;
+	
 	import rpg.Avatar;
 	import rpg.BuySuccessWindow;
 	import rpg.BuyWindow;
@@ -46,7 +51,9 @@ package
 		private var buyWindow:BuyWindow;
 		private var buySuccessWindow:BuySuccessWindow;
 		
-		private var loadedItem:ItemDataObject;
+		//private var loadedItem:ItemDataObject;
+		
+		private var loadedItem:Item;
 		
 		public function WelcomeScreen()
 		{
@@ -104,29 +111,14 @@ package
 		}
 		
 		private function buyItem():void{
-			var selectedItem:ItemDataObject = loadedItem;
-			var urlVariables:URLVariables = new URLVariables();
-			urlVariables.uid = PlayerData.instance.player.uid;
-			urlVariables.forger_id = selectedItem.forger_id;
-			urlVariables.item_id = selectedItem.id;
-			urlVariables.item_sell_price = selectedItem.price;
-			urlVariables.item_buy_price = 0;
-			
-			var urlRequest:URLRequest = new URLRequest("buyItem.php");
-			urlRequest.method = URLRequestMethod.POST;
-			urlRequest.data = urlVariables;
-			
-			var urlLoader:URLLoader = new URLLoader();
-			urlLoader.dataFormat = URLLoaderDataFormat.TEXT;
-			urlLoader.addEventListener(Event.COMPLETE, onBuyItem);
-			urlLoader.load(urlRequest);
+			GameNetworkConnection.instance.buyItem(onBuyItem, loadedItem, PlayerData.instance.player, true);
 		}
 		
-		private function onBuyItem(evt:Event):void{
-			if(evt.target.data == "Success"){
+		private function onBuyItem(result:Object):void{
+			if(result == "Success"){
 				buySuccessWindow.visible = true;
 			}else{
-				Logger.print(this, "Error: " + evt.target.data);
+				Logger.print(this, "Error!");
 			}
 		}
 		
@@ -146,23 +138,18 @@ package
 		}
 		
 		private function loadItem():void{
-			var urlVariables:URLVariables = new URLVariables();
-			urlVariables.uid = PlayerData.instance.linkedUID;
+			var item:Item = new Item();
+			item.id = PlayerData.instance.linkedUID;
 			
-			var urlRequest:URLRequest = new URLRequest("getItem.php");
-			urlRequest.method = URLRequestMethod.POST;
-			urlRequest.data = urlVariables;
-			
-			var urlLoader:URLLoader = new URLLoader();
-			urlLoader.dataFormat = URLLoaderDataFormat.TEXT;
-			urlLoader.addEventListener(Event.COMPLETE, onItemLoaded);
-			urlLoader.load(urlRequest);
+			GameNetworkConnection.instance.getItem(onItemLoaded, item);
 		}
 		
-		private function onItemLoaded(evt:Event):void{
-			var obj:Object = JSON.decode(evt.target.data);
-			loadedItem = new ItemDataObject();
-			loadedItem.populate(obj);
+		private function onItemLoaded(result:Object):void{
+			if(result is Item){
+				loadedItem = result as Item;
+			}else{
+				Logger.print(this, "Error loading free item");
+			}
 			
 			buyWindow.visible = true;
 			buyWindow.isSpecial(loadedItem);
@@ -204,33 +191,12 @@ package
 		}
 		
 		private function loadPlayerData():void{
-			var urlVariables:URLVariables = new URLVariables();
-			urlVariables.uid = PlayerData.instance.session.uid;
-			
-			var urlRequest:URLRequest = new URLRequest("loadPlayerData.php");
-			urlRequest.method = URLRequestMethod.POST;
-			urlRequest.data = urlVariables;
-			
-			var urlLoader:URLLoader = new URLLoader();
-			urlLoader.dataFormat = URLLoaderDataFormat.TEXT;
-			urlLoader.addEventListener(Event.COMPLETE, onPlayerDataLoaded);
-			urlLoader.load(urlRequest);
+			GameNetworkConnection.instance.getPlayer(onPlayerDataLoaded, PlayerData.instance.player);
 		}
 		
-		private function onPlayerDataLoaded(evt:Event):void{
-			var obj:Object = JSON.decode(evt.target.data);
-			
-			with(PlayerData.instance){
-				uid = obj.uid;
-				username = obj.username;
-				loses = obj.loses;
-				wins = obj.wins;
-				isNew = !(obj.isNew == "0");
-				coins = obj.coins;
-				body = obj.body;
-				head = obj.head;
-				armor = obj.armor;
-				weapon = obj.weapon;
+		private function onPlayerDataLoaded(result:Object):void{
+			if(result is Player){
+				PlayerData.instance.player = result as Player;
 			}
 			
 			showAvatar();

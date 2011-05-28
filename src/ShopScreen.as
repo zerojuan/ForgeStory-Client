@@ -23,6 +23,11 @@ package
 	import flash.net.URLVariables;
 	import flash.profiler.showRedrawRegions;
 	
+	import model.Item;
+	import model.Player;
+	
+	import networking.GameNetworkConnection;
+	
 	import rpg.BuySuccessWindow;
 	import rpg.BuyWindow;
 	import rpg.FacebookShower;
@@ -98,6 +103,7 @@ package
 		}
 		
 		private function onComboBoxSelected(evt:Event):void{
+			Logger.print(this, "ComboBox selected!");
 			if(shopListComboBox.selectedIndex == 0){
 				buyButton.label = "Share";
 				isOnFriendsShop = false;
@@ -105,7 +111,7 @@ package
 			}else{
 				buyButton.label = "Buy";
 				isOnFriendsShop = true;
-				loadShopData((shopListComboBox.selectedItem as PlayerDataObject).uid);
+				loadShopData((shopListComboBox.selectedItem as Player).uid);
 			}
 		}
 		
@@ -131,9 +137,9 @@ package
 		}
 		
 		private function onItemSelected(evt:Event):void{
-			var currItem:ItemDataObject = itemList.selectedItem as ItemDataObject;
+			var currItem:Item = itemList.selectedItem as Item;
 			setDisplayedItem(currItem);
-			if(currItem.type == ItemDataObject.MONSTER){
+			if(currItem.type == Item.MONSTER){
 				buyButton.enabled = false;
 			}else{
 				if(PlayerData.instance.player.coins - currItem.price <= 0){
@@ -150,126 +156,78 @@ package
 		
 		private function onBuyButton(evt:Event):void{
 			if(isOnFriendsShop){
-				if((itemList.selectedItem as ItemDataObject).type == ItemDataObject.MONSTER){
+				if((itemList.selectedItem as Item).type == Item.MONSTER){
 					//DangerItems.monster = itemList.selectedItem as ItemDataObject;
 					//ScreenManager.instance.goto(DangerItems.ADVENTURE);
 				}else{
 					buyWindow.enable(true);
-					buyWindow.setItem(itemList.selectedItem as ItemDataObject);
+					buyWindow.setItem(itemList.selectedItem as Item);
 					enable(false);
 				}
 			}else{
-				FacebookShower.instance.showUI(itemList.selectedItem as ItemDataObject);
+				FacebookShower.instance.showUI(itemList.selectedItem as Item);
 			}
 		}
 		
 		override public function onShow():void{
 			loadBuddiesData();
-			loadShopData(PlayerData.instance.player.uid);
+			//loadShopData(PlayerData.instance.player.uid);
 		}
 		
 		override public function onHide():void{
 			
 		}
 		
-		private function setDisplayedItem(itemDisplayed:ItemDataObject):void{
+		private function setDisplayedItem(itemDisplayed:Item):void{
 			descriptionLabel.text = itemDisplayed.description;
 			nameLabel.text = itemDisplayed.name;
 			itemImage.setURL(itemDisplayed.id+".png");
 		}
 		
 		private function buyItem():void{
-			var selectedItem:ItemDataObject = (itemList.selectedItem as ItemDataObject);
-			var urlVariables:URLVariables = new URLVariables();
-			urlVariables.uid = PlayerData.instance.player.uid;
-			urlVariables.forger_id = selectedItem.forger_id;
-			urlVariables.item_id = selectedItem.id;
-			urlVariables.item_sell_price = selectedItem.price;
-			urlVariables.item_buy_price = selectedItem.price;
-			
-			var urlRequest:URLRequest = new URLRequest("buyItem.php");
-			urlRequest.method = URLRequestMethod.POST;
-			urlRequest.data = urlVariables;
-			
-			var urlLoader:URLLoader = new URLLoader();
-			urlLoader.dataFormat = URLLoaderDataFormat.TEXT;
-			urlLoader.addEventListener(Event.COMPLETE, onBuyItem);
-			urlLoader.load(urlRequest);
+			GameNetworkConnection.instance.buyItem(onBuyItem, itemList.selectedItem as Item, PlayerData.instance.player, false);
 		}
 		
-		private function onBuyItem(evt:Event):void{
-			if(evt.target.data == "Success"){
+		private function onBuyItem(result:Object):void{
+			if(result == "Success"){
 				buySuccessWindow.visible = true;
 			}else{
-				Logger.print(this, "Error: " + evt.target.data);
+				Logger.print(this, "Error! " + result);
 			}
 		}
 		
 		private function loadBuddiesData():void{
-			var urlVariables:URLVariables = new URLVariables();
-			urlVariables.uid = PlayerData.instance.player..uid;
-			
-			var urlRequest:URLRequest = new URLRequest("getPlayerBuddies.php");
-			urlRequest.method = URLRequestMethod.POST;
-			urlRequest.data = urlVariables;
-			
-			var urlLoader:URLLoader = new URLLoader();
-			urlLoader.dataFormat = URLLoaderDataFormat.TEXT;
-			urlLoader.addEventListener(Event.COMPLETE, onBuddiesLoaded);
-			urlLoader.load(urlRequest);
+			GameNetworkConnection.instance.getPlayerBuddies(onBuddiesLoaded, PlayerData.instance.player);
 		}
 		
-		private function onBuddiesLoaded(evt:Event):void{
-			var obj:Array = JSON.decode(evt.target.data);
-			Logger.print(this, "Buddies: " + obj.length);
+		private function onBuddiesLoaded(result:Object):void{
+			//var obj:Array = JSON.decode(evt.target.data);
+			Logger.print(this, "Buddies Loaded (length): " + result.length);
 			shopListComboBox.removeAll();
 			shopListComboBox.addItem("My Shop");
-			for(var i:int = 0; i < obj.length; i++){
-				var playerData:PlayerDataObject = new PlayerDataObject();
-				playerData.uid = obj[i][0];
-				playerData.username = obj[i][1];
-				playerData.head = obj[i][2];
-				playerData.body = obj[i][3];
-				shopListComboBox.addItem(playerData);
+			for(var i:int = 0; i < result.length; i++){
+				shopListComboBox.addItem(result[i]);
 			}
 			shopListComboBox.selectedIndex = 0;
+			//loadShopData(PlayerData.instance.player.uid);
 		}
 		
 		private function loadShopData(uid:String):void{
 			itemList.enabled = false;
-			var urlVariables:URLVariables = new URLVariables();
-			urlVariables.uid = uid;
-			
-			var urlRequest:URLRequest = new URLRequest("getPlayerItems.php");
-			urlRequest.method = URLRequestMethod.POST;
-			urlRequest.data = urlVariables;
-			
-			var urlLoader:URLLoader = new URLLoader();
-			urlLoader.dataFormat = URLLoaderDataFormat.TEXT;
-			urlLoader.addEventListener(Event.COMPLETE, onShopDataLoaded);
-			urlLoader.load(urlRequest);
+			GameNetworkConnection.instance.getInventory(onShopDataLoaded, uid, new Item());
 		}
 		
-		private function onShopDataLoaded(evt:Event):void{
-			var obj:Array = JSON.decode(evt.target.data);
-			Logger.print(this, "Size: " + obj.length);
+		private function onShopDataLoaded(result:Object):void{
+			Logger.print(this, "Loaded Inventory (size): " + result.length);
 			itemList.removeAll();
-			if(obj.length == 0){
+			if(result.length == 0){
 				return;
 			}else{
-				for(var i:int = 0; i < obj.length; i++){
-					var itemData:ItemDataObject = new ItemDataObject();
-					itemData.id = obj[i][0];
-					itemData.name = obj[i][1];
-					itemData.forger_id = obj[i][2];
-					itemData.price = obj[i][3];
-					itemData.type = obj[i][4];
-					itemData.taken = obj[i][5];
-					itemData.description = obj[i][6];
-					itemList.addItem(itemData);
+				for(var i:int = 0; i < result.length; i++){
+					itemList.addItem(result[i]);
 				}
 				itemList.selectedIndex = 0;
-				setDisplayedItem(itemList.selectedItem as ItemDataObject);
+				setDisplayedItem(itemList.selectedItem as Item);
 			}
 			itemList.enabled = true;
 		}

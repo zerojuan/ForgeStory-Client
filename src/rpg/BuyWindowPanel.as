@@ -6,6 +6,8 @@ package rpg
 	
 	import flash.display.DisplayObjectContainer;
 	import flash.events.MouseEvent;
+	
+	import model.Item;
 
 	public class BuyWindowPanel extends Panel{
 		public var itemImage:ItemViewer;
@@ -36,13 +38,13 @@ package rpg
 			cancelButton.width = 45;
 		}
 		
-		public function setSummary(item:ItemDataObject):void{
+		public function setSummary(item:Item):void{
 			descriptionLabel.text = "Are you sure you want to buy " + item.name + " for " + item.price + "?" +
 				"You will have " + getValueAfterPurchase(item.price) + " after this purchase.";
 			itemImage.setURL(item.id+".png");
 		}
 		
-		public function setFreeSummary(item:ItemDataObject):void{
+		public function setFreeSummary(item:Item):void{
 			descriptionLabel.text = "Are you sure you want to buy " + item.name + " for free  ?" +
 				"You are getting this for free. Say yes.";
 			itemImage.setURL(item.id+".png");
