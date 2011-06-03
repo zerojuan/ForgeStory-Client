@@ -1,29 +1,29 @@
 package
 {
-	import com.pblabs.engine.debug.Logger;
-	import com.pblabs.screens.BaseScreen;
-	import com.pblabs.screens.ScreenManager;
-	
-	import flash.display.Sprite;
-	import flash.events.Event;
-	import flash.events.MouseEvent;
-	
 	import com.forgestory.model.Item;
 	import com.forgestory.model.Player;
-	
 	import com.forgestory.networking.GameNetworkConnection;
-	
 	import com.forgestory.rpg.Avatar;
 	import com.forgestory.rpg.BuySuccessWindow;
 	import com.forgestory.rpg.BuyWindow;
 	import com.forgestory.rpg.PlayerData;
 	import com.forgestory.rpg.UserDataPanel;
 	import com.forgestory.rpg.WelcomePanel;
-	
+	import com.forgestory.ui.AvatarPanel;
+	import com.forgestory.ui.GameUIStyle;
+	import com.forgestory.ui.ItemPanel;
+	import com.pblabs.engine.debug.Logger;
+	import com.pblabs.screens.BaseScreen;
+	import com.pblabs.screens.ScreenManager;
 	import com.zerojuan.ui.HBox;
 	import com.zerojuan.ui.Label;
 	import com.zerojuan.ui.PushButton;
+	import com.zerojuan.ui.TextArea;
 	import com.zerojuan.ui.Window;
+	
+	import flash.display.Sprite;
+	import flash.events.Event;
+	import flash.events.MouseEvent;
 	
 	public class WelcomeScreen extends BaseScreen
 	{
@@ -36,6 +36,17 @@ package
 		private var _forgeButton:PushButton;
 		private var _goAloningButton:PushButton;
 		private var _editAvatarButton:PushButton;
+		
+		private var _avatarPanel:AvatarPanel;
+		private var _weaponPanel:ItemPanel;
+		private var _armorPanel:ItemPanel;
+		
+		private var _awardLabel:Label;
+		private var _nameLabel:Label;
+		private var _levelLabel:Label;
+		private var _statsLabel:Label;
+		
+		private var _userDescription:TextArea;
 		
 		private var _buttonBox:HBox;
 		
@@ -63,6 +74,11 @@ package
 			_avatar.setBody(PlayerData.instance.player.body+".png");
 			_avatar.setHead(PlayerData.instance.player.head+".png");
 			
+			_avatarPanel = new AvatarPanel(this, 45, 100, _avatar);
+			
+			_weaponPanel = new ItemPanel(this, 25, 290);
+			_armorPanel = new ItemPanel(this, 25, 400);
+			
 			_buttonBox = new HBox(this, 400, 400);
 			
 			_shopButton = new PushButton(_buttonBox, 0, 0, "Shop", onShopButton);
@@ -72,7 +88,12 @@ package
 			
 			_editAvatarButton = new PushButton(this, 150, 450, "Customize", onCustomize);
 			
-			userDataPanel = new UserDataPanel(this, 400, 100);
+			_userDescription = new TextArea(this, 360, 100, "Isn't the hero you need but the hero you deserve");
+			_userDescription.setSize(360, 150);		
+			_userDescription.editable = false;
+			_userDescription.autoHideScrollBar = true;
+			_userDescription.setStyle("Bellerose", 30, GameUIStyle.RED_HIGHLIGHT);
+			
 			
 			welcomeWindow = new Window(this, 320, 100, "Welcome, Person from Facebook");
 			welcomeWindow.hasCloseButton = true;
@@ -94,14 +115,17 @@ package
 			buySuccessWindow.addEventListener(Event.CLOSE, onBuySuccessClosed);
 			buySuccessWindow.addEventListener(MouseEvent.CLICK, onBuySuccessClosed);
 			
-			var label:Label = new Label(this, 10, 15, "JULIUS THE HEROES");
-			label.name = "LabelExists";
+			_nameLabel = new Label(this, 10, 15, "JULIUS THE HEROES");
+			_nameLabel.name = "LabelExists";
 			
-			var label2:Label = new Label(this, 410, 20, "Master of the Universe");
-			label2.setStyle("Redhead", 24, 0xc4eafd);
+			_levelLabel = new Label(this, 410, 20, "Master of the Universe");
+			_levelLabel.setStyle("Redhead", 24, GameUIStyle.MAIN_HIGHLIGHT);
 			
-			var label3:Label = new Label(this, 410, 50, "W 1 D 0 L 4 -- $ 10,000.00");
-			label3.setStyle("Bellerose", 24, 0xc4eafd);
+			_statsLabel = new Label(this, 410, 50, "W 1 D 0 L 4 -- $ 10,000.00");
+			_statsLabel.setStyle("Bellerose", 24, GameUIStyle.MAIN_HIGHLIGHT);
+			
+			_awardLabel = new Label(this, 360, 240, "AWARDS")
+			_awardLabel.setStyle("Bellerose", 24, GameUIStyle.MAIN_HIGHLIGHT);
 		}
 		
 		private function onBuySuccessClosed(evt:Event):void{
@@ -184,9 +208,8 @@ package
 		}
 		
 		private function showAvatar():void{
-			addChild(_avatar);
-			_avatar.x = 100;
-			_avatar.y = 100;
+			_avatar.x = 25;
+			_avatar.y = 25;
 			
 			_avatar.scaleX = 3;
 			_avatar.scaleY = 3;
@@ -194,8 +217,9 @@ package
 			_avatar.setBody(PlayerData.instance.player.body+".png");
 			_avatar.setHead(PlayerData.instance.player.head+".png");
 			
-			userDataPanel.updateArmorImage(PlayerData.instance.player.armor);
-			userDataPanel.updateWeaponImage(PlayerData.instance.player.weapon);
+			_weaponPanel.item.setURL(PlayerData.instance.player.weapon+".png");
+			_armorPanel.item.setURL(PlayerData.instance.player.armor+".png");
+			//userDataPanel.updateWeaponImage(PlayerData.instance.player.weapon);
 		}
 		
 		private function loadPlayerData():void{
