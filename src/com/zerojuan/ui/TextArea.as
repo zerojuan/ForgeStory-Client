@@ -6,7 +6,7 @@ package com.zerojuan.ui
 
 	public class TextArea extends Text{
 		
-		protected var _scrollbar:VScrollBar;
+		protected var _scrollbar:VScrollbar;
 		
 		/**
 		 * Constructor
@@ -34,7 +34,7 @@ package com.zerojuan.ui
 		override protected function addChildren():void
 		{
 			super.addChildren();
-			_scrollbar = new VScrollBar(this, 0, 0, onScrollbarScroll);
+			_scrollbar = new VScrollbar(this, 0, 0, onScrollbarScroll);
 			_tf.addEventListener(Event.SCROLL, onTextScroll);
 		}
 		

@@ -33,7 +33,7 @@ package com.zerojuan.ui
 		 * @param ypos The y position to place this component.
 		 * @param defaultHandler The event handling function to handle the default event for this component (change in this case).
 		 */
-		public function ScrollBar(orientation:String, parent:DisplayObjectContainer=null, xpos:Number=0, ypos:Number=0, defaultHandler:Function = null)
+		public function Scrollbar(orientation:String, parent:DisplayObjectContainer=null, xpos:Number=0, ypos:Number=0, defaultHandler:Function = null)
 		{
 			_orientation = orientation;
 			super(parent, xpos, ypos);

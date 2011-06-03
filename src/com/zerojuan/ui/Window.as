@@ -62,6 +62,7 @@ package com.zerojuan.ui
 			_titleBar.height = 20;
 			super.addChild(_titleBar);
 			_titleLabel = new Label(_titleBar.content, 5, 1, _title);
+			_titleLabel.setStyle("Redhead", 15, 0xff00ff);
 			
 			_grips = new Shape();
 			for(var i:int = 0; i < 4; i++)

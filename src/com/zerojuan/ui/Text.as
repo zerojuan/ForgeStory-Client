@@ -2,6 +2,7 @@ package com.zerojuan.ui
 {
 	import flash.display.DisplayObjectContainer;
 	import flash.events.Event;
+	import flash.text.TextField;
 	import flash.text.TextFieldType;
 	import flash.text.TextFormat;
 	
@@ -15,7 +16,7 @@ package com.zerojuan.ui
 		protected var _html:Boolean = false;
 		protected var _format:TextFormat;
 		
-		public function Text(parent:DisplayObjectContainer=null, xpos:Number=0, ypos:Number=0)
+		public function Text(parent:DisplayObjectContainer=null, xpos:Number=0, ypos:Number=0, text:String = "")
 		{
 			this.text = text;
 			super(parent, xpos, ypos);
@@ -35,8 +36,8 @@ package com.zerojuan.ui
 		 */
 		override protected function addChildren():void
 		{
-			_panel = new Panel(this);
-			_panel.color = Style.TEXT_BACKGROUND;
+			//_panel = new Panel(this);
+			//_panel.color = Style.TEXT_BACKGROUND;
 			
 			_format = new TextFormat(Style.fontName, Style.fontSize, Style.LABEL_TEXT);
 			
@@ -65,8 +66,8 @@ package com.zerojuan.ui
 		{
 			super.draw();
 			
-			_panel.setSize(_width, _height);
-			_panel.draw();
+			//_panel.setSize(_width, _height);
+			//_panel.draw();
 			
 			_tf.width = _width - 4;
 			_tf.height = _height - 4;
@@ -94,7 +95,7 @@ package com.zerojuan.ui
 		}
 		
 		public function setStyle(font:String, size:Number, color:uint):void{
-			_format = new TextFormat(Style.fontName, Style.fontSize, Style.LABEL_TEXT);
+			_format = new TextFormat(font, size, color);
 			_tf.defaultTextFormat = _format;
 			
 			invalidate();

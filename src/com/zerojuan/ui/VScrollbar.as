@@ -4,7 +4,7 @@ package com.zerojuan.ui
 
 	public class VScrollbar extends Scrollbar
 	{
-		public function VScrollBar(parent:DisplayObjectContainer=null, xpos:Number=0, ypos:Number=0, defaultHandler:Function=null)
+		public function VScrollbar(parent:DisplayObjectContainer=null, xpos:Number=0, ypos:Number=0, defaultHandler:Function=null)
 		{
 			super(Slider.VERTICAL, parent, xpos, ypos, defaultHandler);
 		}
