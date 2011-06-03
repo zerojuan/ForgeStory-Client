@@ -23,18 +23,18 @@ package
 	import flash.net.URLVariables;
 	import flash.profiler.showRedrawRegions;
 	
-	import model.Item;
-	import model.Player;
+	import com.forgestory.model.Item;
+	import com.forgestory.model.Player;
 	
-	import networking.GameNetworkConnection;
+	import com.forgestory.networking.GameNetworkConnection;
 	
-	import rpg.BuySuccessWindow;
-	import rpg.BuyWindow;
-	import rpg.FacebookShower;
-	import rpg.ItemDataObject;
-	import rpg.ItemViewer;
-	import rpg.PlayerData;
-	import rpg.PlayerDataObject;
+	import com.forgestory.rpg.BuySuccessWindow;
+	import com.forgestory.rpg.BuyWindow;
+	import com.forgestory.rpg.FacebookShower;
+	import com.forgestory.rpg.ItemDataObject;
+	import com.forgestory.rpg.ItemViewer;
+	import com.forgestory.rpg.PlayerData;
+	import com.forgestory.rpg.PlayerDataObject;
 	
 	public class ShopScreen extends BaseScreen{
 		private var backButton:PushButton;

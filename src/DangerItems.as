@@ -16,18 +16,18 @@ package
 	import flash.net.URLRequestMethod;
 	import flash.net.URLVariables;
 	
-	import model.Player;
+	import com.forgestory.model.Player;
 	
-	import networking.GameNetworkConnection;
+	import com.forgestory.networking.GameNetworkConnection;
 	
 	import org.flexunit.runner.Result;
 	
-	import rpg.ItemDataObject;
-	import rpg.PlayerData;
+	import com.forgestory.rpg.ItemDataObject;
+	import com.forgestory.rpg.PlayerData;
 	
 	import tests.GameConnectionTester;
 	
-	[SWF(width="760", height="520", backgroundColor="0x000000")]
+	[SWF(width="760", height="520", backgroundColor="0xa3d3f9")]
 	public class DangerItems extends Sprite
 	{
 		public static const WELCOME:String = "Welcome";

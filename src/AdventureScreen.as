@@ -10,9 +10,9 @@ package
 	import flash.net.URLRequestMethod;
 	import flash.net.URLVariables;
 	
-	import rpg.Avatar;
-	import rpg.ItemDataObject;
-	import rpg.PlayerData;
+	import com.forgestory.rpg.Avatar;
+	import com.forgestory.rpg.ItemDataObject;
+	import com.forgestory.rpg.PlayerData;
 	
 	public class AdventureScreen extends BaseScreen
 	{

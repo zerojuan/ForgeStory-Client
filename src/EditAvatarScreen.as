@@ -12,13 +12,13 @@ package
 	
 	import flash.events.Event;
 	
-	import model.Item;
+	import com.forgestory.model.Item;
 	
-	import networking.GameNetworkConnection;
+	import com.forgestory.networking.GameNetworkConnection;
 	
-	import rpg.Avatar;
-	import rpg.ItemViewer;
-	import rpg.PlayerData;
+	import com.forgestory.rpg.Avatar;
+	import com.forgestory.rpg.ItemViewer;
+	import com.forgestory.rpg.PlayerData;
 	
 	public class EditAvatarScreen extends BaseScreen{
 		private var editNameText:InputText;

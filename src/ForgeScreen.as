@@ -27,15 +27,15 @@ package
 	import flash.net.URLVariables;
 	import flash.utils.ByteArray;
 	
-	import model.Item;
+	import com.forgestory.model.Item;
 	
-	import networking.GameNetworkConnection;
+	import com.forgestory.networking.GameNetworkConnection;
 	
-	import paint.AcknowledgementPanel;
-	import paint.PaintUI;
+	import com.forgestory.paint.AcknowledgementPanel;
+	import com.forgestory.paint.PaintUI;
 	
-	import rpg.FacebookShower;
-	import rpg.PlayerData;
+	import com.forgestory.rpg.FacebookShower;
+	import com.forgestory.rpg.PlayerData;
 	
 	import tests.GameConnectionTester;
 	

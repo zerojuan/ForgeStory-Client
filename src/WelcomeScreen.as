@@ -1,36 +1,29 @@
 package
 {
-	import com.adobe.serialization.json.JSON;
-	import com.bit101.components.HBox;
-	import com.bit101.components.Panel;
-	import com.bit101.components.PushButton;
-	import com.bit101.components.Window;
 	import com.pblabs.engine.debug.Logger;
 	import com.pblabs.screens.BaseScreen;
 	import com.pblabs.screens.ScreenManager;
 	
+	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
-	import flash.net.URLLoader;
-	import flash.net.URLLoaderDataFormat;
-	import flash.net.URLRequest;
-	import flash.net.URLRequestMethod;
-	import flash.net.URLVariables;
 	
-	import flashx.textLayout.events.UpdateCompleteEvent;
+	import com.forgestory.model.Item;
+	import com.forgestory.model.Player;
 	
-	import model.Item;
-	import model.Player;
+	import com.forgestory.networking.GameNetworkConnection;
 	
-	import networking.GameNetworkConnection;
+	import com.forgestory.rpg.Avatar;
+	import com.forgestory.rpg.BuySuccessWindow;
+	import com.forgestory.rpg.BuyWindow;
+	import com.forgestory.rpg.PlayerData;
+	import com.forgestory.rpg.UserDataPanel;
+	import com.forgestory.rpg.WelcomePanel;
 	
-	import rpg.Avatar;
-	import rpg.BuySuccessWindow;
-	import rpg.BuyWindow;
-	import rpg.ItemDataObject;
-	import rpg.PlayerData;
-	import rpg.UserDataPanel;
-	import rpg.WelcomePanel;
+	import com.zerojuan.ui.HBox;
+	import com.zerojuan.ui.Label;
+	import com.zerojuan.ui.PushButton;
+	import com.zerojuan.ui.Window;
 	
 	public class WelcomeScreen extends BaseScreen
 	{
@@ -58,6 +51,13 @@ package
 		public function WelcomeScreen()
 		{
 			super();
+			
+			//add background image
+			var bg:Sprite = new Sprite();
+			bg.graphics.beginFill(0xa3d3f9);
+			bg.graphics.drawRect(0, 0, 760, 520);
+			bg.graphics.endFill();
+			addChild(bg);
 			
 			_avatar = PlayerData.instance.avatar;
 			_avatar.setBody(PlayerData.instance.player.body+".png");
@@ -94,6 +94,14 @@ package
 			buySuccessWindow.addEventListener(Event.CLOSE, onBuySuccessClosed);
 			buySuccessWindow.addEventListener(MouseEvent.CLICK, onBuySuccessClosed);
 			
+			var label:Label = new Label(this, 10, 15, "JULIUS THE HEROES");
+			label.name = "LabelExists";
+			
+			var label2:Label = new Label(this, 410, 20, "Master of the Universe");
+			label2.setStyle("Redhead", 24, 0xc4eafd);
+			
+			var label3:Label = new Label(this, 410, 50, "W 1 D 0 L 4 -- $ 10,000.00");
+			label3.setStyle("Bellerose", 24, 0xc4eafd);
 		}
 		
 		private function onBuySuccessClosed(evt:Event):void{
