@@ -65,6 +65,13 @@ package
 		public function ShopScreen(){
 			super();
 			
+			//add background image
+			var bg:Sprite = new Sprite();
+			bg.graphics.beginFill(0xa3d3f9);
+			bg.graphics.drawRect(0, 0, 760, 520);
+			bg.graphics.endFill();
+			addChild(bg);
+			
 			vBoxRight = new VBox(this, 400, 100);
 			vBoxLeft = new VBox(this, 100, 300);
 			hBox = new HBox(this, 400, 400);

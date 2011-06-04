@@ -63,6 +63,12 @@ package
 		
 		public function ForgeScreen(){
 			//Style.setStyle(Style.DARK);
+			//add background image
+			var bg:Sprite = new Sprite();
+			bg.graphics.beginFill(0xa3d3f9);
+			bg.graphics.drawRect(0, 0, 760, 520);
+			bg.graphics.endFill();
+			addChild(bg);
 			
 			mainView.name = "MainView";
 			mainView.width = 720;
