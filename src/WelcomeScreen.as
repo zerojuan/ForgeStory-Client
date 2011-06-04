@@ -12,6 +12,8 @@ package
 	import com.forgestory.ui.AvatarPanel;
 	import com.forgestory.ui.GameUIStyle;
 	import com.forgestory.ui.ItemPanel;
+	import com.forgestory.ui.MenuButton;
+	import com.greensock.TweenLite;
 	import com.pblabs.engine.debug.Logger;
 	import com.pblabs.screens.BaseScreen;
 	import com.pblabs.screens.ScreenManager;
@@ -24,19 +26,18 @@ package
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.geom.Point;
 	
 	public class WelcomeScreen extends BaseScreen
 	{
 		private var welcomeWindow:Window;
 		private var welcomePanel:WelcomePanel;
 		
-		private var userDataPanel:UserDataPanel;
-		
-		private var _shopButton:PushButton;
-		private var _forgeButton:PushButton;
-		private var _goAloningButton:PushButton;
+		private var _shopButton:MenuButton;
+		private var _forgeButton:MenuButton;
+		private var _goAloningButton:MenuButton;
 		private var _editAvatarButton:PushButton;
-		
+				
 		private var _avatarPanel:AvatarPanel;
 		private var _weaponPanel:ItemPanel;
 		private var _armorPanel:ItemPanel;
@@ -55,13 +56,32 @@ package
 		private var buyWindow:BuyWindow;
 		private var buySuccessWindow:BuySuccessWindow;
 		
-		//private var loadedItem:ItemDataObject;
-		
 		private var loadedItem:Item;
+		
+		private var _namePos:Point;
+		private var _levelPos:Point;
+		private var _statsPos:Point;
+		private var _userDescPos:Point;
+		private var _avatarPos:Point;
+		private var _weaponPos:Point;
+		private var _armorPos:Point;
+		private var _awardPos:Point;
+		private var _buttonPos:Point;
 		
 		public function WelcomeScreen()
 		{
 			super();
+			
+			//setup layout positions
+			_avatarPos = new Point(45, 100);
+			_weaponPos = new Point(25, 290);
+			_armorPos = new Point(25, 400);
+			_buttonPos = new Point(500, 450);
+			_userDescPos = new Point(360, 100);
+			_namePos = new Point(10, 15);
+			_levelPos = new Point(410, 20);
+			_statsPos = new Point(410, 50);
+			_awardPos = new Point(360, 240);
 			
 			//add background image
 			var bg:Sprite = new Sprite();
@@ -74,21 +94,22 @@ package
 			_avatar.setBody(PlayerData.instance.player.body+".png");
 			_avatar.setHead(PlayerData.instance.player.head+".png");
 			
-			_avatarPanel = new AvatarPanel(this, 45, 100, _avatar);
+			_avatarPanel = new AvatarPanel(this, _avatarPos.x, _avatarPos.y, _avatar);
 			
-			_weaponPanel = new ItemPanel(this, 25, 290);
-			_armorPanel = new ItemPanel(this, 25, 400);
+			_weaponPanel = new ItemPanel(this, _weaponPos.x, _weaponPos.y);
+			_armorPanel = new ItemPanel(this, _armorPos.x, _armorPos.y);
 			
-			_buttonBox = new HBox(this, 400, 400);
+			_buttonBox = new HBox(this, _buttonPos.x, _buttonPos.y);
+			_buttonBox.spacing = 10;
 			
-			_shopButton = new PushButton(_buttonBox, 0, 0, "Shop", onShopButton);
-			_forgeButton = new PushButton(_buttonBox, 100, 0, "Forge", onForgeButton);
-			_goAloningButton = new PushButton(_buttonBox, 0, 0, "Go Aloning!!", onGoAloningButton);
+			_shopButton = new MenuButton(_buttonBox, 0, 0, MenuButton.SHOP, onShopButton);
+			_forgeButton = new MenuButton(_buttonBox, 100, 0, MenuButton.FORGE, onForgeButton);
+			_goAloningButton = new MenuButton(_buttonBox, 0, 0, MenuButton.ADVENTURE, onGoAloningButton);
 			_goAloningButton.enabled = false;
 			
 			_editAvatarButton = new PushButton(this, 150, 450, "Customize", onCustomize);
 			
-			_userDescription = new TextArea(this, 360, 100, "Isn't the hero you need but the hero you deserve");
+			_userDescription = new TextArea(this, _userDescPos.x, _userDescPos.y, "Isn't the hero you need but the hero you deserve");
 			_userDescription.setSize(360, 150);		
 			_userDescription.editable = false;
 			_userDescription.autoHideScrollBar = true;
@@ -115,17 +136,22 @@ package
 			buySuccessWindow.addEventListener(Event.CLOSE, onBuySuccessClosed);
 			buySuccessWindow.addEventListener(MouseEvent.CLICK, onBuySuccessClosed);
 			
-			_nameLabel = new Label(this, 10, 15, "JULIUS THE HEROES");
+			_nameLabel = new Label(this, _namePos.x, _namePos.y, "JULIUS THE HEROES");
 			_nameLabel.name = "LabelExists";
 			
-			_levelLabel = new Label(this, 410, 20, "Master of the Universe");
+			_levelLabel = new Label(this, _levelPos.x, _levelPos.y, "Master of the Universe");
 			_levelLabel.setStyle("Redhead", 24, GameUIStyle.MAIN_HIGHLIGHT);
 			
-			_statsLabel = new Label(this, 410, 50, "W 1 D 0 L 4 -- $ 10,000.00");
-			_statsLabel.setStyle("Bellerose", 24, GameUIStyle.MAIN_HIGHLIGHT);
+			_statsLabel = new Label(this, _statsPos.x, _statsPos.y, "W 1 D 0 L 4 -- $ 10,000.00");
+			_statsLabel.setStyle("Redhead", 24, GameUIStyle.MAIN_HIGHLIGHT);
 			
-			_awardLabel = new Label(this, 360, 240, "AWARDS")
+			_awardLabel = new Label(this, _awardPos.x, _awardPos.y, "AWARDS")
 			_awardLabel.setStyle("Bellerose", 24, GameUIStyle.MAIN_HIGHLIGHT);
+			
+		}
+		
+		private function onForgeClicked(evt:MouseEvent):void{
+			Logger.print(this, "ForgeClicked");
 		}
 		
 		private function onBuySuccessClosed(evt:Event):void{
@@ -167,6 +193,12 @@ package
 			}
 			
 			loadPlayerData();
+			
+			show();
+		}
+		
+		override public function onHide():void{
+			
 		}
 		
 		private function loadItem():void{
@@ -192,19 +224,88 @@ package
 		}
 		
 		private function onShopButton(evt:Event):void{
-			ScreenManager.instance.goto(DangerItems.SHOP);
+			hideThenGoTo(DangerItems.SHOP);
 		}
 		
 		private function onForgeButton(evt:Event):void{
-			ScreenManager.instance.goto(DangerItems.FORGE);
+			hideThenGoTo(DangerItems.FORGE);
 		}
 		
 		private function onGoAloningButton(evt:Event):void{
-			ScreenManager.instance.goto(DangerItems.ADVENTURE);
+			hideThenGoTo(DangerItems.ADVENTURE);
 		}
 		
 		private function onCustomize(evt:Event):void{
-			ScreenManager.instance.goto(DangerItems.EDIT_AVATAR);
+			hideThenGoTo(DangerItems.EDIT_AVATAR);
+		}
+		
+		private function show():void{
+			_nameLabel.x = -300;
+			_statsLabel.x = 900;
+			_levelLabel.x = 900;
+			_avatarPanel.x = -400;
+			_armorPanel.alpha = 0;
+			_armorPanel.x = -400;
+			_weaponPanel.x = -400;
+			_weaponPanel.alpha = 0;
+			_userDescription.x = 900;
+			_awardLabel.alpha = 0;
+			_awardLabel.y = _awardPos.y - 20;
+			
+			_forgeButton.y = 500;
+			_shopButton.y = 500;
+			_goAloningButton.y = 500;
+			
+			TweenLite.to(_nameLabel, .4, {x: _namePos.x});
+			TweenLite.to(_statsLabel, .43, {x: _statsPos.x});
+			TweenLite.to(_levelLabel, .47, {x: _levelPos.x});
+			
+			TweenLite.to(_avatarPanel, .5, {x: _avatarPos.x, onComplete: function():void{
+				TweenLite.to(_armorPanel, .2, {alpha: 1, x: _armorPos.x});
+				TweenLite.to(_weaponPanel, .2, {alpha: 1, x: _weaponPos.x});
+			}});
+			
+			TweenLite.to(_userDescription, .52, {x: _userDescPos.x, onComplete: function():void{
+				TweenLite.to(_awardLabel, .1, {alpha: 1, y: _awardPos.y});
+			}});
+			
+			TweenLite.to(_shopButton, .3, {y: 0});
+			TweenLite.to(_forgeButton, .32, {y: 0});
+			TweenLite.to(_goAloningButton, .33, {y: 0});
+			
+			_shopButton.enabled = true;
+			_forgeButton.enabled = true;
+			//_goAloningButton.enabled = true;
+		}
+		
+		private function hideThenGoTo(screen:String):void{
+			Logger.print(this, "Hiding");
+			_shopButton.enabled = false;
+			_forgeButton.enabled = false;
+			_goAloningButton.enabled = false;
+			
+			TweenLite.to(_weaponPanel, .2, {alpha: 0, x: -400});
+			TweenLite.to(_armorPanel, .2, {alpha: 0, x: -400, onComplete: function():void{
+				TweenLite.to(_avatarPanel, .3, {x: -400});
+				
+			}});
+			
+			TweenLite.to(_shopButton, .5, {y: 500});
+			TweenLite.to(_forgeButton, .47, {y: 500});
+			TweenLite.to(_goAloningButton, .43, {y: 500});
+			
+			TweenLite.to(_awardLabel, .20, {y: _awardPos.y - 20, alpha: 0, onComplete: function():void{
+				TweenLite.to(_userDescription, .3, {x: 900});
+			}});
+			
+			TweenLite.to(_nameLabel, .8, {x: -500, onComplete:function():void{
+				TweenLite.to(this, .2, {onComplete:function():void{
+					ScreenManager.instance.goto(screen);
+				}});
+			}});
+			TweenLite.to(_statsLabel, .65, {x: 900});
+			TweenLite.to(_levelLabel, .6, {x: 900});
+			
 		}
 		
 		private function showAvatar():void{
